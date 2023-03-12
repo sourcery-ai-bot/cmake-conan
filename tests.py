@@ -23,7 +23,7 @@ def save(filename, content):
 def run(cmd, ignore_errors=False):
     retcode = os.system(cmd)
     if retcode != 0 and not ignore_errors:
-        raise Exception("Command failed: %s" % cmd)
+        raise Exception(f"Command failed: {cmd}")
 
 if platform.system() == "Windows":
     generator = '-G "Visual Studio 16 2019"'
@@ -86,7 +86,7 @@ class CMakeConanTest(unittest.TestCase):
         """))
         run("conan profile new default --detect")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release > output.txt" % generator)
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release > output.txt")
         with open('output.txt', 'r') as file:
             data = file.read()
             assert "-o=fmt:shared=True" in data
@@ -111,7 +111,7 @@ class CMakeConanTest(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release 2> stderr_output.txt" % generator)
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release 2> stderr_output.txt")
         with open('stderr_output.txt', 'r') as file:
             data = file.read()
             assert "#include_next <string.h>" not in data
@@ -148,7 +148,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         with open('conanfile.txt', 'r') as file:
             data = file.read()
             assert data in result_conanfile
@@ -174,7 +174,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
 
     def test_conan_cmake_install_conf_args(self):
@@ -193,7 +193,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release > output.txt".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release > output.txt")
         with open('output.txt', 'r') as file:
             data = file.read()
             assert "--conf user.configuration:myconfig=somevalue" in data
@@ -222,7 +222,7 @@ class CMakeConanTest(unittest.TestCase):
         """))
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         assert os.path.isdir("myoutputfolder")
 
     def test_conan_cmake_install_find_package(self):
@@ -246,7 +246,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
 
     def test_conan_lock_create(self):
@@ -272,7 +272,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         assert os.path.exists("mylockfile.lock")
         run("cmake --build . --config Release")
 
@@ -297,7 +297,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release > output.txt".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release > output.txt")
         with open('output.txt', 'r') as file:
             data = file.read()
             assert "compiler.cppstd=14" in data
@@ -342,7 +342,7 @@ class CMakeConanTest(unittest.TestCase):
         os.chdir("../")
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % generator)
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         
     def test_conan_cmake_install_quiet(self):
         content = textwrap.dedent("""
@@ -366,10 +366,10 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release > output.txt".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release > output.txt")
         with open('output.txt', 'r') as file:
             data = file.read()
-            assert not "conanfile.txt: Installing package" in data      
+            assert "conanfile.txt: Installing package" not in data      
         
     def test_conan_cmake_error_quiet(self):
         content = textwrap.dedent("""
@@ -391,7 +391,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
 
     def test_conan_add_remote(self):
         content = textwrap.dedent("""
@@ -406,7 +406,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % generator)
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         run("conan remote list > output_remotes.txt")
         with open('output_remotes.txt', 'r') as file:
             data = file.read()
@@ -434,7 +434,7 @@ class CMakeConanTest(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % generator)
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
         cmd = os.sep.join([".", "bin", "main"])
         run(cmd)
@@ -474,7 +474,7 @@ class CMakeConanTest(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % generator)
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
         cmd = os.sep.join([".", "bin", "main"])
         run(cmd)
@@ -546,7 +546,7 @@ class CMakeConanTest(unittest.TestCase):
         os.makedirs("build")
         os.chdir("build")
         # Only works cmake>=3.9
-        run("cmake .. %s -T v142,host=x64 -DCMAKE_BUILD_TYPE=Release" % (generator))
+        run(f"cmake .. {generator} -T v142,host=x64 -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
         cmd = os.sep.join([".", "bin", "main"])
         run(cmd)
@@ -573,7 +573,7 @@ class CMakeConanTest(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % (generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
 
 
     def test_no_output_dir(self):
@@ -599,7 +599,7 @@ class CMakeConanTest(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % (generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
 
     def test_build_type(self):
         content = textwrap.dedent("""
@@ -620,7 +620,7 @@ class CMakeConanTest(unittest.TestCase):
         """)
         save("CMakeLists.txt", content.format("Release"))
         with ch_build_dir():
-            run("cmake .. %s  -DCMAKE_BUILD_TYPE=Debug > output.txt" % (generator))
+            run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Debug > output.txt")
             with open('output.txt', 'r') as file:
                 data = file.read()
                 assert "build_type=Release" in data
@@ -628,7 +628,7 @@ class CMakeConanTest(unittest.TestCase):
         # https://github.com/conan-io/cmake-conan/issues/89
         save("CMakeLists.txt", content.format("Debug"))
         with ch_build_dir():
-            run("cmake .. %s > output.txt" % (generator))
+            run(f"cmake .. {generator} > output.txt")
             with open('output.txt', 'r') as file:
                 data = file.read()
                 assert "build_type=Debug" in data
@@ -658,7 +658,7 @@ class CMakeConanTest(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Release" % (generator))
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Release")
 
     # https://github.com/conan-io/cmake-conan/issues/255
     # Manual settings were added in the end to automatic CMake settings, so they were not
@@ -667,10 +667,10 @@ class CMakeConanTest(unittest.TestCase):
     def test_settings_removed_from_autodetect(self):
         if platform.system() == "Windows":
             settings_check = "compiler.runtime"
-            custom_setting = "{}=MTd".format(settings_check)
+            custom_setting = f"{settings_check}=MTd"
         else:
             settings_check = "compiler.libcxx"
-            custom_setting = "{}=libstdc++".format(settings_check)
+            custom_setting = f"{settings_check}=libstdc++"
 
         content = textwrap.dedent("""
             cmake_minimum_required(VERSION 3.9)
@@ -688,7 +688,7 @@ class CMakeConanTest(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Release" % (generator))
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Release")
 
     def test_profile_auto(self):
         content = textwrap.dedent("""
@@ -726,8 +726,8 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
 
         os.chdir("build")
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Release" % (generator))
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Debug" % (generator))
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Release")
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Debug")
 
         save("build/myprofile", textwrap.dedent("""
             [settings]
@@ -739,8 +739,8 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
 
         os.chdir("build")
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Release" % (generator))
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Debug" % (generator))
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Release")
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Debug")
 
     def test_profile_auto_all(self):
         content = textwrap.dedent("""
@@ -778,8 +778,8 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
 
         os.chdir("build")
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Release" % (generator))
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Debug" % (generator))
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Release")
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Debug")
 
         save("build/myprofile", textwrap.dedent("""
             [settings]
@@ -791,8 +791,8 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
 
         os.chdir("build")
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Release" % (generator))
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Debug" % (generator))
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Release")
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Debug")
 
     def test_multi_profile(self):
         content = textwrap.dedent("""
@@ -825,8 +825,8 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
 
         os.chdir("build")
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Release" % (generator))
-        run("cmake .. %s  -DCMAKE_BUILD_TYPE=Debug" % (generator))
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Release")
+        run(f"cmake .. {generator}  -DCMAKE_BUILD_TYPE=Debug")
 
     def test_conan_config_install(self):
         remote_name = "test-remote"
@@ -847,9 +847,9 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s" % generator)
+        run(f"cmake .. {generator}")
 
-        with open("%s/.conan/remotes.json" % os.environ["CONAN_USER_HOME"]) as json_file:
+        with open(f'{os.environ["CONAN_USER_HOME"]}/.conan/remotes.json') as json_file:
             data = json.load(json_file)
             assert len(data["remotes"]) == 1, "Invalid number of remotes"
             remote = data["remotes"][0]
@@ -873,7 +873,7 @@ class CMakeConanTest(unittest.TestCase):
         os.makedirs("build")
         os.chdir("build")
 
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release > output.txt".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release > output.txt")
         with open('output.txt', 'r') as file:
             data = file.read()
             assert "Repo cloned!" in data
@@ -942,7 +942,7 @@ class CMakeConanTest(unittest.TestCase):
         save("CMakeLists.txt", content)
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. {} -DCMAKE_BUILD_TYPE=Release".format(generator))
+        run(f"cmake .. {generator} -DCMAKE_BUILD_TYPE=Release")
         with open('profile', 'r') as file:
             data = file.read()
             assert data in result_conanfile
@@ -989,9 +989,9 @@ class LocalTests(unittest.TestCase):
     def _build_multi(self, build_types):
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s" % self.generator)
+        run(f"cmake .. {self.generator}")
         for build_type in build_types:
-            run("cmake --build . --config %s" % build_type)
+            run(f"cmake --build . --config {build_type}")
             cmd = os.sep.join([".", build_type, "main"])
             run(cmd)
 
@@ -1015,7 +1015,7 @@ class LocalTests(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % self.generator)
+        run(f"cmake .. {self.generator} -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
         cmd = os.sep.join([".", "bin", "main"])
         run(cmd)
@@ -1040,7 +1040,7 @@ class LocalTests(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % self.generator)
+        run(f"cmake .. {self.generator} -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
         cmd = os.sep.join([".", "bin", "main"])
         run(cmd)
@@ -1067,7 +1067,7 @@ class LocalTests(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % self.generator)
+        run(f"cmake .. {self.generator} -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
         cmd = os.sep.join([".", "bin", "main"])
         run(cmd)
@@ -1095,7 +1095,7 @@ class LocalTests(unittest.TestCase):
                             "[generators]\ncmake")
 
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release" % self.generator)
+        run(f"cmake .. {self.generator} -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
         cmd = os.sep.join([".", "bin", "main"])
         run(cmd)
@@ -1117,7 +1117,7 @@ class LocalTests(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -DCMAKE_BUILD_TYPE=Release > output.txt" % self.generator)
+        run(f"cmake .. {self.generator} -DCMAKE_BUILD_TYPE=Release > output.txt")
         with open('output.txt', 'r') as file:
             data = file.read()
             assert f"Conan Version is: {str(conan_version.major)}.{str(conan_version.minor)}.{str(conan_version.patch)}" in data
@@ -1142,7 +1142,7 @@ class LocalTests(unittest.TestCase):
 
         os.makedirs("build")
         os.chdir("build")
-        run("cmake .. %s -T v142 -DCMAKE_BUILD_TYPE=Release" % (self.generator))
+        run(f"cmake .. {self.generator} -T v142 -DCMAKE_BUILD_TYPE=Release")
         run("cmake --build . --config Release")
         cmd = os.sep.join([".", "bin", "main"])
         run(cmd)
